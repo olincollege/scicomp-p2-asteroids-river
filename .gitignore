@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# jupyter notebook checkpoints
+.ipynb
+
+# ignore file that's too big to upload to GitHub
+proper_elements.txt
