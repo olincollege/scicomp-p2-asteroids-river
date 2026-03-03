@@ -209,5 +209,6 @@ __marimo__/
 # jupyter notebook checkpoints
 .ipynb
 
-# ignore file that's too big to upload to GitHub
+# ignore data files that're too big to upload to GitHub
 proper_elements.txt
+all_tro.members.txt
