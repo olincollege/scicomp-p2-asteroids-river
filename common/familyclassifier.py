@@ -9,10 +9,10 @@ class FamilyClassifier(ABC):
         
         Parameters:
         elements (pd.DataFrame): A DataFrame containing the proper elements of asteroids. 
-            Columns: 'Name', 'a', 'e', 'sinI', 'n', 'g', 's'
+            Columns: 'Name', 'a', 'e', 'sinI', 'n', 'g', 's'. 'Name' is a string, the others are floats.
         Returns:
         pd.DataFrame: A DataFrame containing the family classification of the asteroids. 
-            Columns: 'name', 'family1'. Family1 is 0 if the asteroid is not a member of any family,
+            Columns: 'name', 'family1', both strings. Family1 is "0" if the asteroid is not a member of any family,
             or the name of the family it is a member of. (The name of a family is the name of its lowest numbered member.)
         """
         pass
