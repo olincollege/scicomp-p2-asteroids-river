@@ -2,6 +2,8 @@ from sklearn import cluster
 from common.familyclassifier import FamilyClassifier
 import pandas as pd
 
+from common.familynames import get_family_name
+
 class KMeansFamilyClassifier(FamilyClassifier):
     """
     K-Means based asteroid family classifier.
@@ -17,6 +19,19 @@ class KMeansFamilyClassifier(FamilyClassifier):
         """
         self.n_clusters = n_clusters
         self.kmeans = cluster.KMeans(n_clusters=n_clusters, random_state=42)
+    
+    @staticmethod
+    def get_params() -> dict:
+        """
+        Get the parameters of the classifier as a dictionary. The keys should be the parameter names, and the values 
+        should be a description of the parameter.
+        
+        Returns:
+        dict: A dictionary containing the parameters of the classifier.
+        """
+        return {
+            "n_clusters": "The number of clusters to use for K-Means. Default is 39, which is the number of families in the training set."
+        }
     
     def classify(self, elements: pd.DataFrame) -> pd.DataFrame:
         """
@@ -39,7 +54,7 @@ class KMeansFamilyClassifier(FamilyClassifier):
             if len(cluster_members) == 0:
                 family_names[i] = "0"
             else:
-                family_names[i] = cluster_members.sort_values("Name").iloc[0]["Name"]
+                family_names[i] = get_family_name(cluster_members["Name"])
         return pd.DataFrame({
             "name": elements["Name"],
             "family1": [family_names[i] for i in results]
