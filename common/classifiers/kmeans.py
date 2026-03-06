@@ -17,8 +17,8 @@ class KMeansFamilyClassifier(FamilyClassifier):
         Parameters:
         n_clusters (int): The number of clusters to use for K-Means. Default is 39, which is the number of families in the training set.
         """
-        self.n_clusters = n_clusters
-        self.kmeans = cluster.KMeans(n_clusters=n_clusters, random_state=42)
+        self.n_clusters = int(n_clusters)
+        self.kmeans = cluster.KMeans(n_clusters=self.n_clusters, random_state=42)
     
     @staticmethod
     def get_params() -> dict:

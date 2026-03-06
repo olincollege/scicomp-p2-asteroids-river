@@ -212,3 +212,6 @@ __marimo__/
 # ignore data files that're too big to upload to GitHub
 proper_elements.txt
 all_tro.members.txt
+
+# ignore the results of parameter sweeps
+data/sweeps/
