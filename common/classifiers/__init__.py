@@ -1,12 +1,15 @@
+from common.familyclassifier import FamilyClassifier
+
 from . import kmeans, dbscan
 
-all_classifiers = {
+
+all_classifiers: dict[str, type[FamilyClassifier]] = {
     "kmeans": kmeans.KMeansFamilyClassifier,
     "dbscan": dbscan.DBSCANFamilyClassifier,
 }
 
 
-def get_classifier_by_name(name: str):
+def get_classifier_by_name(name: str) -> type[FamilyClassifier]:
     """
     Look up a classifier class by name (case-insensitive).
 

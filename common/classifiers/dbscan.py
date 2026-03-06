@@ -16,9 +16,9 @@ class DBSCANFamilyClassifier(FamilyClassifier):
         eps (float): The maximum distance between two samples for them to be considered as in the same neighborhood. Default is 0.01, but this absolutely requires tuning.
         min_samples (int): The number of samples in a neighborhood for a point to be considered as a core point. Default is 5, which is a common choice for DBSCAN.
         """
-        self.eps = eps
-        self.min_samples = min_samples
-        self.dbscan = cluster.DBSCAN(eps=eps, min_samples=min_samples)
+        self.eps = float(eps)
+        self.min_samples = int(min_samples)
+        self.dbscan = cluster.DBSCAN(eps=self.eps, min_samples=self.min_samples)
     
     @staticmethod
     def get_params() -> dict:

@@ -14,8 +14,28 @@ from common.classifiers import (
 )
 from common.datasets import AVAILABLE_DATASETS, load_dataset, choose_dataset_interactive
 from common.classificationscorer import ClassificationScorer
+from common.familyclassifier import FamilyClassifier
 from common.inputs import build_arg_parser, get_parameters
 import numpy as np
+import os
+
+def get_result_string(parameters: dict, scorer: ClassificationScorer) -> str:
+    """
+    Get a string representation of the results that can be stored in a CSV file.
+    Includes parameters for this run, number of predicted families, number of non-family asteroids, V-measure, and total Carrie measure.
+
+    Parameters:
+    parameters (dict): The dictionary of parameters used for this run.
+    scorer (ClassificationScorer): The ClassificationScorer object containing the results to summarize.
+    Returns:
+    str: A string summarizing the results.
+    """
+    num_families = scorer.num_families()
+    num_non_family = scorer.num_non_family_asteroids()
+    v_measure = scorer.v_measure()
+    total_carrie_measure, _ = scorer.carrie_measure()
+    param_str = ", ".join(f"{value:.4f}" for value in parameters.values())
+    return f"{param_str}, {num_families}, {num_non_family}, {v_measure:.4f}, {total_carrie_measure:.4f}"
 
 
 def main():
@@ -50,3 +70,24 @@ def main():
         return
     
     print(f"Sweeping over parameters: {', '.join(f'{name}={values}' for name, values in swept_params)}")
+    output_file = os.path.join("data", "sweeps", f"{classifier_name}_{dataset_name}_sweep_results.csv")
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "w") as f:
+        header = ", ".join(name for name, _ in swept_params) + ", num_families, num_non_family, v_measure\n"
+        f.write(header)
+    # run the sweep over every combination of parameter values
+    param_combinations = np.array(np.meshgrid(*[values for _, values in swept_params])).T.reshape(-1, len(swept_params))
+    for combination in param_combinations:
+        parameters = {name: value for (name, _), value in zip(swept_params, combination)}
+        print(f"Running with parameters: {parameters}")
+        classifier_cls = get_classifier_by_name(classifier_name)
+        classifier = classifier_cls(**parameters)
+        predicted_labels = classifier.classify(proper_elements)
+        scorer = ClassificationScorer(predicted_labels, family_membership)
+        result_string = get_result_string(parameters, scorer)
+        with open(output_file, "a") as f:
+            f.write(result_string + "\n")
+        print(f"Results: {result_string}")
+
+if __name__ == "__main__":
+    main()
