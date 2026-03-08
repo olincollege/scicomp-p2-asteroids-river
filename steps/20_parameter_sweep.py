@@ -70,7 +70,7 @@ def main():
         return
     
     print(f"Sweeping over parameters: {', '.join(f'{name}={values}' for name, values in swept_params)}")
-    output_file = os.path.join("data", "sweeps", f"{classifier_name}_{dataset_name}_{'_'.join(f'{name}_{value.replace(":", "_"):.5f}' for name, value in parameters.items())}_results.csv")
+    output_file = os.path.join("data", "sweeps", f"{classifier_name}_{dataset_name}_{'_'.join(f'{name}_{value.replace(":", "_")}' for name, value in parameters.items())}_results.csv")
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     with open(output_file, "w") as f:
         header = ", ".join(name for name, _ in swept_params) + ", num_families, num_non_family, v_measure, total_carrie_measure\n"
