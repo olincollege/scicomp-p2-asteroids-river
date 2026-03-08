@@ -21,7 +21,7 @@ class HDBSCANFamilyClassifier(FamilyClassifier):
         self.min_samples = int(min_samples) if min_samples is not None else self.min_cluster_size
         self.cluster_selection_epsilon = float(cluster_selection_epsilon)
         self.n_jobs = int(n_jobs)
-        self.hdbscan = cluster.HDBSCAN(min_cluster_size=self.min_cluster_size, min_samples=self.min_samples, cluster_selection_epsilon=self.cluster_selection_epsilon, n_jobs=self.n_jobs, copy=True)
+        self.hdbscan = cluster.HDBSCAN(min_cluster_size=self.min_cluster_size, min_samples=self.min_samples, cluster_selection_epsilon=self.cluster_selection_epsilon, n_jobs=self.n_jobs, copy=False)
 
     @staticmethod
     def get_params() -> dict:

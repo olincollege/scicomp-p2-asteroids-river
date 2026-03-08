@@ -1,11 +1,13 @@
 from common.familyclassifier import FamilyClassifier
 
-from . import kmeans, dbscan, hdbscan
+from . import kmeans, dbscan, hdbscan, dbscan_3param, dbscan_3param_norm
 
 
 all_classifiers: dict[str, type[FamilyClassifier]] = {
     "kmeans": kmeans.KMeansFamilyClassifier,
     "dbscan": dbscan.DBSCANFamilyClassifier,
+    "dbscan_3param": dbscan_3param.DBSCAN3FamilyClassifier,
+    "dbscan_3param_norm": dbscan_3param_norm.DBSCAN3NormFamilyClassifier,
     "hdbscan": hdbscan.HDBSCANFamilyClassifier,
 }
 
