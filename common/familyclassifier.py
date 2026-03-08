@@ -19,6 +19,8 @@ class FamilyClassifier(ABC):
             or the name of the family it is a member of. (The name of a family is the name of its lowest numbered member.)
         """
         pass
+    
+    @staticmethod
     @abstractmethod
     def get_params() -> dict:
         """
