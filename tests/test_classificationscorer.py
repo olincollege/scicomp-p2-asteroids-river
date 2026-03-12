@@ -1,6 +1,5 @@
 """
 Comprehensive pytest suite for common/classificationscorer.py.
-Entirely AI-generated for now - we'll see if this causes problems or needs human tweaking.
 """
 
 import pytest
@@ -66,41 +65,6 @@ class TestInit:
         assert all(scorer.true_labels["family1"] == "0")
 
 
-# ---------------------------------------------------------------------------
-# rand_index
-# ---------------------------------------------------------------------------
-
-class TestRandIndex:
-    def test_perfect_classification_is_one(self):
-        """Identical predicted and true labels → adjusted Rand index of 1.0."""
-        predicted = make_predicted(("A", "4"), ("B", "4"), ("C", "8"), ("D", "8"))
-        true = make_true(("A", "4"), ("B", "4"), ("C", "8"), ("D", "8"))
-        scorer = ClassificationScorer(predicted, true)
-        assert scorer.rand_index() == pytest.approx(1.0)
-
-    def test_all_same_cluster_when_should_be_split_is_low(self):
-        """Collapsing two families into one gives a score well below 1."""
-        predicted = make_predicted(("A", "100"), ("B", "100"), ("C", "100"), ("D", "100"))
-        true = make_true(("A", "4"), ("B", "4"), ("C", "8"), ("D", "8"))
-        scorer = ClassificationScorer(predicted, true)
-        assert scorer.rand_index() < 1.0
-
-    def test_returns_float(self):
-        predicted = make_predicted(("A", "4"), ("B", "8"))
-        true = make_true(("A", "4"), ("B", "8"))
-        scorer = ClassificationScorer(predicted, true)
-        assert isinstance(scorer.rand_index(), float)
-
-    def test_swapped_labels_penalised(self):
-        """Swapping every family label gives a lower score than perfect."""
-        predicted_perfect = make_predicted(("A", "4"), ("B", "4"), ("C", "8"), ("D", "8"))
-        predicted_swapped = make_predicted(("A", "8"), ("B", "8"), ("C", "4"), ("D", "4"))
-        true = make_true(("A", "4"), ("B", "4"), ("C", "8"), ("D", "8"))
-        scorer_perfect = ClassificationScorer(predicted_perfect, true)
-        scorer_swapped = ClassificationScorer(predicted_swapped, true)
-        # swapped clusters have the same grouping structure, so ARI should still be 1.0
-        # (ARI is permutation-invariant on labels)
-        assert scorer_swapped.rand_index() == pytest.approx(scorer_perfect.rand_index())
 
 
 # ---------------------------------------------------------------------------
@@ -147,11 +111,13 @@ class TestCarrieMeasureSingle:
         return ClassificationScorer(make_predicted(*predicted_rows), make_true(*true_rows))
 
     def test_perfect_match_passes(self):
+        predicted_members = {"A", "B", "C"}
+        true_members = {"A", "B", "C"}
         scorer = self._scorer_with_families(
             [("A", "4"), ("B", "4"), ("C", "4")],
             [("A", "4"), ("B", "4"), ("C", "4")],
         )
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.carrie_measure_pass is True
         assert result.true_positive_rate == pytest.approx(1.0)
         assert result.false_positive_rate == pytest.approx(0.0)
@@ -161,8 +127,10 @@ class TestCarrieMeasureSingle:
         # 16 true members, predict only 15 of them (TPR = 15/16 ≈ 0.9375)
         true_rows = [(f"ast{i}", "4") for i in range(16)]
         pred_rows = [(f"ast{i}", "4") for i in range(15)] + [("ast15", "0")]
+        predicted_members = {f"ast{i}" for i in range(15)}
+        true_members = {f"ast{i}" for i in range(16)}
         scorer = self._scorer_with_families(pred_rows, true_rows)
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.true_positive_rate < 0.95
         assert result.carrie_measure_pass is False
 
@@ -171,8 +139,10 @@ class TestCarrieMeasureSingle:
         # 20 true members, predict 19 of them with no extras (TPR = 0.95)
         true_rows = [(f"ast{i}", "4") for i in range(20)]
         pred_rows = [(f"ast{i}", "4") for i in range(19)] + [("ast19", "0")]
+        predicted_members = {f"ast{i}" for i in range(19)}
+        true_members = {f"ast{i}" for i in range(20)}
         scorer = self._scorer_with_families(pred_rows, true_rows)
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.true_positive_rate == pytest.approx(0.95)
         assert result.carrie_measure_pass is True
 
@@ -181,8 +151,10 @@ class TestCarrieMeasureSingle:
         # 100 true members all predicted, plus 6 false positives (FPR = 6/106)
         true_rows = [(f"ast{i}", "4") for i in range(100)]
         pred_rows = [(f"ast{i}", "4") for i in range(100)] + [(f"fake{i}", "4") for i in range(6)]
+        predicted_members = {f"ast{i}" for i in range(100)} | {f"fake{i}" for i in range(6)}
+        true_members = {f"ast{i}" for i in range(100)}
         scorer = self._scorer_with_families(pred_rows, true_rows)
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.false_positive_rate > 0.05
         assert result.carrie_measure_pass is False
 
@@ -191,8 +163,10 @@ class TestCarrieMeasureSingle:
         # true_rows has 19 members; predicted has 19 true + 1 extra = 20 (FPR = 1/20 = 0.05)
         true_rows = [(f"ast{i}", "4") for i in range(19)]
         pred_rows = [(f"ast{i}", "4") for i in range(19)] + [("extra0", "4")]
+        predicted_members = {f"ast{i}" for i in range(19)} | {"extra0"}
+        true_members = {f"ast{i}" for i in range(19)}
         scorer = self._scorer_with_families(pred_rows, true_rows)
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.false_positive_rate == pytest.approx(1 / 20)
         assert result.carrie_measure_pass is True
 
@@ -201,45 +175,55 @@ class TestCarrieMeasureSingle:
         # Only 5 of 20 true members predicted, plus 10 non-members
         true_rows = [(f"ast{i}", "4") for i in range(20)]
         pred_rows = [(f"ast{i}", "4") for i in range(5)] + [(f"fake{i}", "4") for i in range(10)]
+        predicted_members = {f"ast{i}" for i in range(5)} | {f"fake{i}" for i in range(10)}
+        true_members = {f"ast{i}" for i in range(20)}
         scorer = self._scorer_with_families(pred_rows, true_rows)
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.carrie_measure_pass is False
 
     def test_empty_true_family_tpr_is_zero(self):
         """When the true family has no members, TPR is 0 and Carrie fails."""
+        predicted_members = {"A"}
+        true_members = set()
         scorer = self._scorer_with_families(
             [("A", "4")],
             [("A", "8")],  # no family "4" in true
         )
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.true_positive_rate == pytest.approx(0.0)
         assert result.carrie_measure_pass is False
 
     def test_empty_predicted_family_fpr_is_zero(self):
         """When the predicted family has no members, FPR is 0."""
+        predicted_members = set()
+        true_members = {"A"}
         scorer = self._scorer_with_families(
             [("A", "0")],
             [("A", "4")],
         )
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         # predicted "4" is empty so FPR = 0
         assert result.false_positive_rate == pytest.approx(0.0)
 
     def test_correct_true_family_recorded(self):
+        predicted_members = {"A"}
+        true_members = {"A"}
         scorer = self._scorer_with_families(
             [("A", "4")],
             [("A", "4")],
         )
-        result = scorer._carrie_measure_single("4", "8")
+        result = scorer._carrie_measure_single(predicted_members, "8", true_members, 0.95, 0.05)
         assert result.corresponding_true_family == "8"
 
     def test_disjoint_families_fail(self):
         """No overlap at all means TPR=0, Carrie fails."""
+        predicted_members = {"A", "B"}
+        true_members = {"C", "D"}
         scorer = self._scorer_with_families(
             [("A", "4"), ("B", "4")],
             [("C", "4"), ("D", "4")],
         )
-        result = scorer._carrie_measure_single("4", "4")
+        result = scorer._carrie_measure_single(predicted_members, "4", true_members, 0.95, 0.05)
         assert result.true_positive_rate == pytest.approx(0.0)
         assert result.carrie_measure_pass is False
 

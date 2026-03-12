@@ -7,6 +7,7 @@ num_families, num_non_family, v_measure, total_carrie_measure.
 """
 
 import os
+from matplotlib.ticker import FuncFormatter
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -46,7 +47,7 @@ def main():
             print("Invalid parameter number, exiting.")
             return
         param_2 = param_names[param_2_idx]
-    print(f"Plotting results with param_1={param_1} and param_2={param_2}...")
+    print(f"Plotting results with param_1={param_1} (min={df[param_1].min()}, max={df[param_1].max()}) and param_2={param_2} (min={df[param_2].min()}, max={df[param_2].max()})...")
     # plot the results in a 2x2 grid of subplots, one for each metric
     fig, axs = plt.subplots(2, 2, figsize=(12, 10))
     fig.suptitle(f"Sweep results from {file_to_plot}")
@@ -57,7 +58,7 @@ def main():
         ax = axs[i // 2, i % 2]
         if param_2:
             pivot = df.pivot_table(index=param_2, columns=param_1, values=metric)
-            im = ax.imshow(pivot, aspect='auto', origin='lower')
+            im = ax.imshow(pivot, aspect='auto', origin='lower', extent=(df[param_1].min(), df[param_1].max(), df[param_2].min(), df[param_2].max()), cmap='viridis')
             ax.set_xlabel(param_1)
             ax.set_ylabel(param_2)
             ax.set_title(metric)

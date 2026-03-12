@@ -3,7 +3,7 @@ Helpers for loading and selecting datasets.
 """
 
 import pandas as pd
-from typing import Tuple
+from typing import List, Tuple
 
 AVAILABLE_DATASETS = ["train", "test", "validate", "all"]
 
@@ -46,3 +46,22 @@ def choose_dataset_interactive() -> str:
     except ValueError:
         raise SystemExit("Invalid dataset choice, exiting.")
     return AVAILABLE_DATASETS[idx - 1]
+
+def choose_datasets_interactive() -> List[str]:
+    """
+    Prompt the user to pick one or more datasets interactively.
+
+    Returns:
+    List[str]: The chosen dataset names (e.g. ["train", "validate"]).
+    """
+    print("\nAvailable datasets:")
+    for i, name in enumerate(AVAILABLE_DATASETS, 1):
+        print(f"  {i}. {name}")
+    raw = input("Enter the numbers of the datasets to use, separated by commas (e.g. '1,3' for train and validate): ")
+    try:
+        idxs = [int(x.strip()) for x in raw.split(",")]
+        if any(idx < 1 or idx > len(AVAILABLE_DATASETS) for idx in idxs):
+            raise ValueError()
+    except ValueError:
+        raise SystemExit("Invalid dataset choice, exiting.")
+    return [AVAILABLE_DATASETS[idx - 1] for idx in idxs]
