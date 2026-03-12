@@ -19,6 +19,8 @@ The benchmark for this project is a Carrie measure of at least 8 (see [Metrics](
 
 ![A plot of six asteroid families in a-i space](results/dbscan_3param_norm_3set_eps_0.0175_carrieplot.png)
 
+(Family 1911 is the Schubart family, a group of Hildian asteroids outside of the main asteroid belt with a large semimajor axis of ~3.96 AU. It is off the right side of the plot.)
+
 These results were achieved using the DBSCAN algorithm, running on the 3-parameter normalized dataset, with an `eps` parameter of 0.0175 and a `min_samples` parameter of 8. However, the results are very sensitive to changes in permissiveness of the Carrie measure. For example, if the false positive threshold is increased just from 5% to 6%, the Carrie measure jumps from 6 to 11:
 
 ![A plot of eleven asteroid families in a-i space](results/dbscan_3param_norm_3set_eps_0.0175_0.06fp_carrieplot.png)
