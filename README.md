@@ -1,5 +1,6 @@
 # Asteroid family classification
-This project seeks to identify [asteroid families](https://en.wikipedia.org/wiki/Asteroid_family) from raw asteroid orbit data.
+This project seeks to identify [asteroid families](https://en.wikipedia.org/wiki/Asteroid_family) from raw asteroid orbit data, and to compare the performance of various generalized clustering algorithms on this task. Based on [Groups of Asteroids Probably of Common Origin](https://articles.adsabs.harvard.edu/pdf/1918AJ.....31..185H) by K. Hirayama and the [AstDys database](https://newton.spacedys.com/astdys2/index.php?pc=5) of asteroid information.
+
 ![A plot of several asteroid families in a-i space](results/dbscan_3param_norm_3set_eps_0.0175_carrieplot.png)
 
 ## Project structure
@@ -12,6 +13,19 @@ This repository is constructed as a series of steps that are intended to be run 
 - `results`: Graphs and data moved here by the author, used in documentation. No code uses this directory.
 - `steps`: Python scripts that are intended to be run by the user in sequence, in service of creating final results.
 - `tests`: Pytest tests for components of the system that use Pytest (see below for commentary on testing/correctness)
+
+## Benchmark comparison
+The benchmark for this project is a Carrie measure of at least 8 (see [Metrics](#metrics) for an explanation of the Carrie measure). The best result this project was able to achieve was a Carrie measure of 6, shown below:
+
+![A plot of six asteroid families in a-i space](results/dbscan_3param_norm_3set_eps_0.0175_carrieplot.png)
+
+These results were achieved using the DBSCAN algorithm, running on the 3-parameter normalized dataset, with an `eps` parameter of 0.0175 and a `min_samples` parameter of 8. However, the results are very sensitive to changes in permissiveness of the Carrie measure. For example, if the false positive threshold is increased just from 5% to 6%, the Carrie measure jumps from 6 to 11:
+
+![A plot of eleven asteroid families in a-i space](results/dbscan_3param_norm_3set_eps_0.0175_0.06fp_carrieplot.png)
+
+And here's a general sensitivity plot of how the Carrie measure changes as the true positive threshold and false positive threshold are adjusted:
+
+![A heatmap of the Carrie measure as the true positive and false positive thresholds are adjusted](results/dbscan_3param_norm_3set_eps_0.0175_thresholds.png)
 
 ## Usage
 ### (with `uv`)
