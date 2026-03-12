@@ -19,6 +19,7 @@ This repository is constructed as a series of steps that are intended to be run 
 
 ### (without `uv`)
 If you don't have `uv` installed and don't want to use it:
+
 0. Make sure you have at least Python 3.13.
 1. Set up a venv to install dependencies into.
 2. `pip install -r requirements.txt`
