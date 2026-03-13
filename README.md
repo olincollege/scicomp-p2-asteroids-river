@@ -29,6 +29,14 @@ And here's a general sensitivity plot of how the Carrie measure changes as the t
 
 ![A heatmap of the Carrie measure as the true positive and false positive thresholds are adjusted](results/dbscan_3param_norm_3set_eps_0.0175_thresholds.png)
 
+Finally, here are the best results of 4 tested classifiers side-by-side:
+
+| K-means (Carrie measure: 0) | DBSCAN (Carrie measure: 4) | 
+|---|---|
+| ![A plot of asteroid families found by K-means](results/kmeans_3set_carrieplot.png)| ![A plot of asteroid families found by DBSCAN](results/dbscan_3set_eps_0.0867_carrieplot.png)|
+| DBSCAN/3-param/norm (Carrie measure: 6) | HDBSCAN/3-param/norm (Carrie measure: 2) |
+| ![A plot of asteroid families found by DBSCAN with 3 parameters and normalized data](results/dbscan_3param_norm_3set_eps_0.0175_carrieplot.png)| ![A plot of asteroid families found by HDBSCAN with 3 parameters and normalized data](results/hdbscan_3param_norm_3set_carrieplot.png) |
+
 ## Usage
 ### (with `uv`)
 [`uv`](https://docs.astral.sh/uv/) is an incredible Python package manager. If you have it installed, simply run `uv run python main.py` and the program will launch with all dependencies being automatically installed.

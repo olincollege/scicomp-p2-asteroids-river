@@ -49,7 +49,7 @@ def main():
     assert all_proper_elements is not None and all_family_membership is not None, "No datasets loaded, cannot plot results."
     # plot the results
     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-    fig.suptitle(f"Classification results for {classifier_name} on {dataset_names}\n{parameters} (6% false positive threshold)")
+    fig.suptitle(f"Classification results for {classifier_name} on {dataset_names}\n{parameters}")
     style = MarkerStyle("+").scaled(0.3)
     # plot all asteroids in dataset in light/translucent gray
     for ax in axs:
