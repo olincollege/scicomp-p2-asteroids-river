@@ -54,6 +54,9 @@ Once you have the program running, you will be provided a list of steps to run. 
 You will often be offered a choice of classifiers or datasets. The various options for these are discussed below.
 
 ## Steps
+Note: Steps are not numbered perfectly sequentially. This is to allow for the insertion of new steps without needing to change the numbering of existing steps. Broadly, steps in the 00s are for initial data preprocessing, steps in the 10s are for single classifier runs, and steps in the 20s are for parameter sweeps.
+
+Steps are generally not intended to be run directly. They should be run interactively via `main.py` (except for step 20, which is intended to be run via the `slurm-array-param-sweep.sh` script.)
 
 ### 00: Download data
 Downloads raw orbital elements and family membership data from [AstDys](https://newton.spacedys.com/astdys2/index.php?pc=5), and stores it in `./data`. 
