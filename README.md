@@ -97,6 +97,9 @@ Take a concatenated sweep result file and plot its metrics.
 
 Plots one or two parameters against the 4 metrics: number of families found, number of non-family asteroids, [V-measure], and Carrie measure. See below for in-depth explanation of these metrics.
 
+Example output plot (the whitespaces are the result of merging overlapping parameter sweeps with different step sizes):
+![A plot of the results of a parameter sweep](results/dbscan_3param_norm_train.png)
+
 Run this once you have a concatenated results file from step 21.
 
 ## Metrics
